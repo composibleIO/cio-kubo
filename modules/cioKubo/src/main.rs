@@ -3,13 +3,10 @@
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 
-// use curl_effector_imports as curl;
-// use curl_effector_imports::CurlRequest;
 
 use cio_ipfs_effector_imports as ipfs;
 use std::fs;
 use std::path::PathBuf;
-// use std::io;
 
 module_manifest!();
 
@@ -18,7 +15,7 @@ pub fn main() {}
 
 #[marine]
 pub fn get(ipfs_api: String, cid: String) -> String {
-    let path = vault_path("output");
+    let path = vault_path("kubo_tmp");
     let result = ipfs::get(ipfs_api, cid, &path);
     if result.success {
         match std::fs::read_to_string(&path) {
@@ -45,7 +42,7 @@ pub fn getFolders(ipfs_api: String, cid: String, path_: String) -> String {
 
 #[marine]
 pub fn add(ipfs_api: String, content: String) -> String {
-    let path = vault_path("output");
+    let path = vault_path("kubo_tmp");
     let _ = fs::write(PathBuf::from(path.clone()), content);
     let result = ipfs::add(ipfs_api, path);
     if result.success {
@@ -59,6 +56,17 @@ pub fn add(ipfs_api: String, content: String) -> String {
 pub fn addFolders(ipfs_api: String, path_: String) -> String {
     let path = vault_path(&path_);
     let result = ipfs::add(ipfs_api, path);
+    if result.success {
+        result.hash
+    } else {    
+        result.error
+    }
+}
+
+#[marine]
+pub fn hashFolder(ipfs_api: String, path_: String) -> String {
+    let path = vault_path(&path_);
+    let result = ipfs::hash(ipfs_api, path);
     if result.success {
         result.hash
     } else {    
