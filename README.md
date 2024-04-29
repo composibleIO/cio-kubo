@@ -1,5 +1,5 @@
 
-This is a !(fluence)[http://fluence.dev] to share and demonstrate the cioKubo service, which is based on the cio-ipfs-effector, that in turn based is a fork from ipfs-effector. 
+This is a ![fluence](http://fluence.dev) to share and demonstrate the cioKubo service, which is based on the cio-ipfs-effector, that in turn based is a fork from ipfs-effector. 
 
 Methods have been added to get and put recirsive filestructures, as well as a method to get the CIDV1 without storing data. 
 
