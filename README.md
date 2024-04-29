@@ -1,5 +1,5 @@
 
-This is a ![fluence](http://fluence.dev) to share and demonstrate the cioKubo service, which is based on the cio-ipfs-effector, that in turn based is a fork from ipfs-effector. 
+This is a [fluence](http://fluence.dev) to share and demonstrate the cioKubo service, which is based on the [cio-ipfs-effector](https://github.com/composibleIO/cio-curl-effector), that in turn based is a fork from the the fluencelabs official [ipfs-effector](https://github.com/fluencelabs/ipfs-effector). 
 
 Methods have been added to get and put recirsive filestructures, as well as a method to get the CIDV1 without storing data. 
 
@@ -20,7 +20,7 @@ fluence deploy
 fluence run -f 'test()'
 ```
 
-For a usage example see (the aqua code)[src/aqua.main.aqua] for that test. 
+For a usage example see [the aqua code](src/aqua.main.aqua) for that test. 
 
 To use in a project clone this repository in a seperate folder and then symlink 
 
