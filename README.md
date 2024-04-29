@@ -1,12 +1,14 @@
+# Fluence Minimal Template
 
-a marine wrapper around the ipfs-effector, plus two methods to inspect the particle vault.
+## Usage
 
-```
-service CioKubo("cioKubo"):
-  add(ipfs_api: string, content: string) -> string
-  addFolders(ipfs_api: string, path_: string) -> string
-  get(ipfs_api: string, cid: string) -> string
-  getFolders(ipfs_api: string, cid: string, path_: string) -> string
-  inspectParticleVault() -> []string
-  inspectParticleVaultFolder(path: string) -> []string
+```sh
+# Generate a service template and add it to the default worker
+fluence service new myService
+
+# Deploy the default worker
+fluence deploy
+
+# Uncomment `runDeployedServices` aqua function in `src/aqua/main.aqua` and run it
+fluence run -f 'runDeployedServices()'
 ```

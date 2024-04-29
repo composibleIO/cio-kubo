@@ -1,0 +1,97 @@
+aqua Main
+
+import "@fluencelabs/aqua-lib/builtin.aqua"
+import "@fluencelabs/aqua-lib/subnet.aqua"
+
+use "deals.aqua"
+use "hosts.aqua"
+import "services.aqua"
+
+-- IMPORTANT: Add exports for all functions that you want to run
+export test, test2
+
+func getTestWorkers() -> []Worker:
+
+    deals <- Deals.get()
+    dealId = deals.testV0!.dealIdOriginal
+    on HOST_PEER_ID:
+        subnet <- Subnet.resolve(dealId)
+    if subnet.success == false:
+        Console.print(["Failed to resolve subnet: ", subnet.error])
+    <- subnet.workers
+
+func verifyResults(res: *string, cid: string) -> bool:
+
+    b: *bool
+
+    if res[0] == res[1] && res[0] == res[2] : 
+        if res[0] == cid :
+            Console.print("test ran succesfully")
+            b <<- true
+        else :
+           Console.print("comparison ran awry") 
+           b <<-false
+    else : 
+        Console.print("peers returned different results")
+        b <<-false
+
+    <- b!
+
+func allTrue(bs: []bool) -> bool:
+
+    r: *bool
+    r <<- true
+
+    for b <- bs:
+        if b == false:
+            r  <<- false
+
+    <- r[r.length - 1]
+
+
+func test() -> bool:
+
+    b: *bool
+    cids: *string
+    res: *string
+    content = "hello trisolaris"
+    content2 = "hello world"
+    cid = "bafkreie2v7b5wwbukiwzli6yvli5asjldo73ipznmwve5x5db54rwql4de"
+    ipfs_api = "/dns4/ipfs/tcp/5001"
+    
+    for w <- getTestWorkers() par:
+        on w.worker_id! via w.host_id:
+            cids <- CioKubo.add(ipfs_api,content)
+    join cids[2]
+
+    b <- verifyResults(cids, cid)
+
+    for w <- getTestWorkers() par:
+        on w.worker_id! via w.host_id:
+            res <- CioKubo.get(ipfs_api,cid)
+    join res[2]
+
+    b <- verifyResults(res, content)
+
+    <- allTrue(b)
+
+func test2() -> bool:
+
+    res: *string
+    cids: *string
+    cid = "bafybeiamh4td3vg25zlgcw7pybudtxbmkidsqx7lbv5zvodfa4kjsn66dq"
+    ipfs_api = "/dns4/ipfs/tcp/5001"
+    
+    for w <- getTestWorkers() par:
+        on w.worker_id! via w.host_id:
+            res <- CioKubo.getRecursive(ipfs_api,cid,"test")    
+    join res[2]
+
+    for w <- getTestWorkers():
+        on w.worker_id! via w.host_id:
+            cids <- CioKubo.addRecursive(ipfs_api,"test")
+    join cids[2]
+
+    Console.print(cids)
+
+    <- verifyResults(cids, cid)

@@ -1,0 +1,11 @@
+aqua Services declares *
+
+
+service CioKubo("cioKubo"):
+  add(ipfs_api: string, content: string) -> string
+  addRecursive(ipfs_api: string, path_: string) -> string
+  get(ipfs_api: string, cid: string) -> string
+  getRecursive(ipfs_api: string, cid: string, path_: string) -> string
+  hash(ipfs_api: string, path_: string) -> string
+  inspectParticleVault() -> []string
+  inspectParticleVaultFolder(path: string) -> []string
