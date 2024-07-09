@@ -11,5 +11,5 @@ name: cioKubo
 modules:
   facade:
     get: modules/cioKubo
-  cio_ipfs_effector:
-    get: modules/cio-ipfs-effector
+  ipfs_effector:
+    get: modules/ipfs-effector

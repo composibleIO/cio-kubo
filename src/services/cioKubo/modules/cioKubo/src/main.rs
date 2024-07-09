@@ -2,17 +2,31 @@
 
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
+use marine_rs_sdk::WasmLoggerBuilder;
 use cio_ipfs_effector_imports as ipfs;
 use std::fs;
 use std::path::PathBuf;
+use cio_response_types::AMResponse;
+use chrono::{Utc};
 
 module_manifest!();
 
-pub fn main() {}
+pub fn main() {
+
+    WasmLoggerBuilder::new()
+    // with_log_level can be skipped,
+    // logger will be initialized with Info level in this case.
+    .with_log_level(log::LevelFilter::Info)
+    .build()
+    .unwrap();
+}
 
 
 #[marine]
 pub fn get(ipfs_api: String, cid: String) -> String {
+
+    // log::info!("kanarie KUBO DAN!");
+
     let path = vault_path("kubo_tmp");
     let result = ipfs::get(ipfs_api, cid, &path);
     if result.success {
@@ -24,6 +38,25 @@ pub fn get(ipfs_api: String, cid: String) -> String {
         result.error
     }
 }
+
+// #[marine]
+// pub fn dag_get(ipfs_api: String, cid: String) -> String {
+
+//     println!("kukelekuu 1");
+//     let path = vault_path("kubo_tmp");
+//     let result = ipfs::dag_get(ipfs_api, cid, &path);
+
+//     println!("kukelekuu {:?}", result);
+
+//     if result.success {
+//         match std::fs::read_to_string(&path) {
+//             Ok(result) => result,
+//             Err(err) => err.to_string()
+//         }
+//     } else {
+//         result.error
+//     }
+// }
 
 
 #[marine]
@@ -61,14 +94,45 @@ pub fn addRecursive(ipfs_api: String, path_: String) -> String {
     }
 }
 
+// #[marine]
+// pub fn dag_put(ipfs_api: String, content: String) -> String {
+//     let path = vault_path("kubo_tmp");
+//     let _ = fs::write(PathBuf::from(path.clone()), content);
+//     let result = ipfs::dag_put(ipfs_api, path);
+//     if result.success {
+//         result.hash
+//     } else {
+//         result.error
+//     }
+// }
+
 #[marine]
-pub fn hash(ipfs_api: String, path_: String) -> String {
+pub fn hash(ipfs_api: String, path_: String) -> AMResponse {
     let path = vault_path(&path_);
     let result = ipfs::hash(ipfs_api, path);
+
+    let cp = marine_rs_sdk::get_call_parameters();
+    let timestamp = Utc::now().timestamp_millis();
+
     if result.success {
-        result.hash
-    } else {    
-        result.error
+
+        return AMResponse {
+            success: true,
+            result: result.hash.clone(),
+            result_raw: result.hash,
+            timestamp,
+            host_id: cp.host_id
+        }  
+
+    } else {   
+        
+        return AMResponse {
+            success: false,
+            result_raw: String::from(""),
+            result: result.error,
+            timestamp,
+            host_id: cp.host_id
+        }  
     }
 }
 
@@ -83,7 +147,7 @@ fn vault_path(filename: &str) -> String {
     format!("/tmp/vault/{}-{}/{}", cp.particle.id, cp.particle.token, filename)
 }
 
-fn vault() -> String {
-    let cp = marine_rs_sdk::get_call_parameters();
-    format!("/tmp/vault/{}-{}", cp.particle.id, cp.particle.token)
-}
+// fn vault() -> String {
+//     let cp = marine_rs_sdk::get_call_parameters();
+//     format!("/tmp/vault/{}-{}", cp.particle.id, cp.particle.token)
+// }
