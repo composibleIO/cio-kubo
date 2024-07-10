@@ -3,7 +3,7 @@
 use marine_rs_sdk::marine;
 use marine_rs_sdk::module_manifest;
 use marine_rs_sdk::WasmLoggerBuilder;
-use cio_ipfs_effector_imports as ipfs;
+use ipfs_effector_imports as ipfs;
 use std::fs;
 use std::path::PathBuf;
 use cio_response_types::AMResponse;
@@ -106,35 +106,35 @@ pub fn addRecursive(ipfs_api: String, path_: String) -> String {
 //     }
 // }
 
-#[marine]
-pub fn hash(ipfs_api: String, path_: String) -> AMResponse {
-    let path = vault_path(&path_);
-    let result = ipfs::hash(ipfs_api, path);
+// #[marine]
+// pub fn hash(ipfs_api: String, path_: String) -> AMResponse {
+//     let path = vault_path(&path_);
+//     let result = ipfs::hash(ipfs_api, path);
 
-    let cp = marine_rs_sdk::get_call_parameters();
-    let timestamp = Utc::now().timestamp_millis();
+//     let cp = marine_rs_sdk::get_call_parameters();
+//     let timestamp = Utc::now().timestamp_millis();
 
-    if result.success {
+//     if result.success {
 
-        return AMResponse {
-            success: true,
-            result: result.hash.clone(),
-            result_raw: result.hash,
-            timestamp,
-            host_id: cp.host_id
-        }  
+//         return AMResponse {
+//             success: true,
+//             result: result.hash.clone(),
+//             result_raw: result.hash,
+//             timestamp,
+//             host_id: cp.host_id
+//         }  
 
-    } else {   
+//     } else {   
         
-        return AMResponse {
-            success: false,
-            result_raw: String::from(""),
-            result: result.error,
-            timestamp,
-            host_id: cp.host_id
-        }  
-    }
-}
+//         return AMResponse {
+//             success: false,
+//             result_raw: String::from(""),
+//             result: result.error,
+//             timestamp,
+//             host_id: cp.host_id
+//         }  
+//     }
+// }
 
 // Since all effectors are working via the Particle Vault, you need to provide a correct path to the vault.
 // At the moment, we don't have any nice library for this sort of things, so you need to do it manually.
